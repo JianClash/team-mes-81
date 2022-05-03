@@ -9,22 +9,8 @@ namespace SpriteKind {
  * HeroHouse()
  */
 /**
- * game.onUpdateInterval(500, function(){
- */
-/**
- * function HeroHouse(){
- * 
- * controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
- * 
- * if (canEnterRaft == true) {
- * 
- * enterRaftingMode()
- * 
  * }
- * 
- * })
  */
-
 /**
  * scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileDarkGrass3, function (sprite, location) {
  * 
@@ -32,37 +18,72 @@ namespace SpriteKind {
  * 
  * })
  */
-/**
- * scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass1, function (sprite, location) {
- * 
- * canEnterRaft = false
- * 
- * })
- */
-/**
- * }
- */
-/**
- * controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
- * 
- * enterRaftingMode()
- * 
- * })
- */
+// controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+// 
+// enterRaftingMode()
+// 
+// })
+scene.onHitWall(SpriteKind.Raft, function (sprite, location) {
+    if (currentTileMap == "Sea") {
+        canEnterVillage = true
+    }
+    if (currentTileMap == "Village") {
+        canEnterRaft = true
+    }
+    if (currentTileMap == "River") {
+        canEnterRiver = true
+    }
+})
+function loadRiver2 () {
+	
+}
+function loadVillage () {
+    controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (canEnterRaft == true) {
+            currentTileMap = "River"
+            tiles.loadMap(tiles.createMap(assets.tilemap`River`))
+            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+            enterRaftingMode()
+            canEnterRiver = false
+            loadRiver()
+        }
 
+    })
+}
+function loadRiver () {
+    controller.A.onEvent(ControllerButtonEvent.Pressed, function(){
+
+        if (canEnterRaft == true){
+            currentTileMap = "River2"
+            tiles.loadMap(tiles.createMap(assets.tilemap`River2`))
+            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+            enterRaftingMode()
+            canEnterRiver = false
+            loadRiver2()
+        }
+
+    })
+}
+// scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass1, function (sprite, location) {
+// 
+// canEnterRaft = false
+// 
+// })
 function loadHeroHouse () {
-    if (!canEnterRaft){ 
+    spawnHero()
+    spawnRaft()
+    if (!(canEnterRaft)) {
         scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileDarkGrass3, function (sprite, location) {
             canEnterRaft = true
         })
     }
-    
-    if (canEnterRaft){ 
+    if (canEnterRaft) {
         scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass1, function (sprite, location) {
             canEnterRaft = false
         })
     }
-
     controller.B.onEvent(ControllerButtonEvent.Pressed, function(){ 
         if (canEnterRaft == true) {
             currentTileMap = "Sea"
@@ -74,54 +95,37 @@ function loadHeroHouse () {
             loadSea()
         }
     })
-    
-}
-function spawnHero () {
-    hero = sprites.create(assets.image`Hero`, SpriteKind.Player)
-    enterWalkingMode()
 }
 function loadSea () {
     controller.B.onEvent(ControllerButtonEvent.Pressed, function(){
-        if (canEnterLand == true) {
+        if (canEnterVillage == true) {
             currentTileMap = "Village"
             tiles.loadMap(tiles.createMap(assets.tilemap`Village`))
             sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
             sprites.destroyAllSpritesOfKind(SpriteKind.Player)
             spawnHero()
-            canEnterLand = false
+            canEnterVillage = false
             loadVillage()
         }
         
     })
-
 }
-function loadVillage(){
-    controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-        if (canEnterRaft == true) {
-            currentTileMap = "River"
-            tiles.loadMap(tiles.createMap(assets.tilemap`River`))
-            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
-            sprites.destroyAllSpritesOfKind(SpriteKind.Player)
-            enterRaftingMode()
-            canEnterRaft = false
-            loadRiver()
-        }
-
-    })
+function spawnHero () {
+    hero = sprites.create(assets.image`Hero`, SpriteKind.Player)
+    tiles.placeOnRandomTile(hero, assets.tile`myTile17`)
+    tiles.coverAllTiles(assets.tile`myTile17`, sprites.castle.tileGrass2)
+    enterWalkingMode()
 }
+function spawnRaft () {
+    raft = sprites.create(assets.image`RaftFlippedRight`, 0)
+    
+    // raft = sprites.create(assets.image`Raft`.clone().flipX(90), 0)
 
-function loadRiver(){
-    // Controller.A.onEvent(ControllerButtonEvent.Pressed, function(){
-
-    //     if (canEnterRaft == true){
-    //         currentTileMap = "River2"
-    //         tiles.loadMap(tiles.crea)
-    //     }
-
-    // })
+    tiles.placeOnRandomTile(raft, assets.tile`myTile16`)
+    tiles.replaceAllTiles(assets.tile`myTile16`, assets.tile`myTile3`)
 }
-
 function enterWalkingMode () {
+    
     sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
     scene.cameraFollowSprite(hero)
     controller.moveSprite(hero, heroVel, heroVel)
@@ -426,6 +430,8 @@ function enterRaftingMode () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
     raft = sprites.create(assets.image`RaftWithPlayer`, SpriteKind.Raft)
+    tiles.placeOnRandomTile(raft, assets.tile`myTile16`)
+    tiles.replaceAllTiles(assets.tile`myTile16`, assets.tile`myTile3`)
     scene.cameraFollowSprite(raft)
     controller.moveSprite(raft, raftVel, raftVel)
     characterAnimations.loopFrames(
@@ -1048,35 +1054,24 @@ let raft: Sprite = null
 let hero: Sprite = null
 let raftVel = 0
 let heroVel = 0
+let currentTileMap = ""
+let canEnterRiver = false
+let canEnterVillage = false
 let canEnterRaft = false
-let currentTileMap = "HeroHouse"
-let canEnterLand = false
+currentTileMap = "HeroHouse"
 tiles.loadMap(tiles.createMap(assets.tilemap`HeroHouse`))
-heroVel = 200
+heroVel = 50
 raftVel = 50
-spawnHero()
-
 loadHeroHouse()
-
-
-scene.onHitWall(SpriteKind.Raft, function (sprite, location) {
-    if (currentTileMap == "Sea") {
-        canEnterLand = true
-    }
-    if (currentTileMap == "Village"){
-        canEnterRaft = true
-    }
-})
-
-
+// game.onUpdateInterval(500, function(){
 game.onUpdateInterval(100, function () {
     // if (currentTileMap == "HeroHouse") {
-    //     loadHeroHouse()
+    // loadHeroHouse()
     // }
     if (currentTileMap == "Sea") {
-    	loadSea()
+        loadSea()
     }
-    if (currentTileMap == "Village"){
+    if (currentTileMap == "Village") {
         loadVillage()
     }
 })
