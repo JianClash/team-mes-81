@@ -61,6 +61,10 @@ function heroHouse(){
    
     controller.B.onEvent(ControllerButtonEvent.Pressed, function(){ 
         if (canEnterRaft == true) {
+            currentTileMap = "Sea"
+            tiles.loadMap(tiles.createMap(assets.tilemap`Sea`))
+            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Player)
             enterRaftingMode()
         }
     })
@@ -71,9 +75,9 @@ function spawnHero () {
     enterWalkingMode()
 }
 
-function spawnRaft () {
-    raft = sprites.create(assets.image`Raft`, SpriteKind.Raft)
-}
+// function spawnRaft () {
+//     raft = sprites.create(assets.image`Raft`, SpriteKind.Raft)
+// }
 
 function enterWalkingMode () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
@@ -1018,10 +1022,11 @@ heroVel = 200
 raftVel = 50
 
 spawnHero()
-console.log(tiles.getLoadedMap())
 
 game.onUpdate(function (){
     if (currentTileMap == "HeroHouse"){
         heroHouse()
     }
+
+    if (currentTileMap == "Sea"){}
 })
