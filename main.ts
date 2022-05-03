@@ -81,7 +81,6 @@ function spawnHero () {
     enterWalkingMode()
 }
 function loadSea () {
-    
     controller.B.onEvent(ControllerButtonEvent.Pressed, function(){
         if (canEnterLand == true) {
             currentTileMap = "Village"
@@ -97,9 +96,29 @@ function loadSea () {
 
 }
 function loadVillage(){
-    if (canEnterRaft == true){
-        
-    }
+    controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+        if (canEnterRaft == true) {
+            currentTileMap = "River"
+            tiles.loadMap(tiles.createMap(assets.tilemap`River`))
+            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+            enterRaftingMode()
+            canEnterRaft = false
+            loadRiver()
+        }
+
+    })
+}
+
+function loadRiver(){
+    // Controller.A.onEvent(ControllerButtonEvent.Pressed, function(){
+
+    //     if (canEnterRaft == true){
+    //         currentTileMap = "River2"
+    //         tiles.loadMap(tiles.crea)
+    //     }
+
+    // })
 }
 
 function enterWalkingMode () {
@@ -1043,6 +1062,9 @@ loadHeroHouse()
 scene.onHitWall(SpriteKind.Raft, function (sprite, location) {
     if (currentTileMap == "Sea") {
         canEnterLand = true
+    }
+    if (currentTileMap == "Village"){
+        canEnterRaft = true
     }
 })
 
