@@ -3,6 +3,29 @@ namespace SpriteKind {
     export const Trigger = SpriteKind.create()
 }
 /**
+ * })
+ */
+/**
+ * HeroHouse()
+ */
+/**
+ * game.onUpdateInterval(500, function(){
+ */
+/**
+ * function HeroHouse(){
+ * 
+ * controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+ * 
+ * if (canEnterRaft == true) {
+ * 
+ * enterRaftingMode()
+ * 
+ * }
+ * 
+ * })
+ */
+
+/**
  * scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileDarkGrass3, function (sprite, location) {
  * 
  * canEnterRaft = true
@@ -26,39 +49,20 @@ namespace SpriteKind {
  * 
  * })
  */
-/**
- * })
- */
-/**
- * HeroHouse()
- */
-/**
- * game.onUpdateInterval(500, function(){
- */
-/**
- * function HeroHouse(){
- * 
- * controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
- * 
- * if (canEnterRaft == true) {
- * 
- * enterRaftingMode()
- * 
- * }
- * 
- * })
- */
 
-function heroHouse(){
-   
-    scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileDarkGrass3, function (sprite, location) {
-        canEnterRaft = true
-    })
+function loadHeroHouse () {
+    if (!canEnterRaft){ 
+        scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileDarkGrass3, function (sprite, location) {
+            canEnterRaft = true
+        })
+    }
+    
+    if (canEnterRaft){ 
+        scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass1, function (sprite, location) {
+            canEnterRaft = false
+        })
+    }
 
-    scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass1, function (sprite, location) {
-        canEnterRaft = false
-    })
-   
     controller.B.onEvent(ControllerButtonEvent.Pressed, function(){ 
         if (canEnterRaft == true) {
             currentTileMap = "Sea"
@@ -66,18 +70,37 @@ function heroHouse(){
             sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
             sprites.destroyAllSpritesOfKind(SpriteKind.Player)
             enterRaftingMode()
+            canEnterRaft = false
+            loadSea()
         }
     })
+    
 }
-
 function spawnHero () {
     hero = sprites.create(assets.image`Hero`, SpriteKind.Player)
     enterWalkingMode()
 }
+function loadSea () {
+    
+    controller.B.onEvent(ControllerButtonEvent.Pressed, function(){
+        if (canEnterLand == true) {
+            currentTileMap = "Village"
+            tiles.loadMap(tiles.createMap(assets.tilemap`Village`))
+            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Player)
+            spawnHero()
+            canEnterLand = false
+            loadVillage()
+        }
+        
+    })
 
-// function spawnRaft () {
-//     raft = sprites.create(assets.image`Raft`, SpriteKind.Raft)
-// }
+}
+function loadVillage(){
+    if (canEnterRaft == true){
+        
+    }
+}
 
 function enterWalkingMode () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
@@ -380,18 +403,12 @@ function enterWalkingMode () {
     characterAnimations.rule(Predicate.MovingLeft)
     )
 }
-
 function enterRaftingMode () {
-    
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
-    
     raft = sprites.create(assets.image`RaftWithPlayer`, SpriteKind.Raft)
-    
     scene.cameraFollowSprite(raft)
-    
     controller.moveSprite(raft, raftVel, raftVel)
-    
     characterAnimations.loopFrames(
     raft,
     [img`
@@ -1008,25 +1025,36 @@ function enterRaftingMode () {
     characterAnimations.rule(Predicate.NotMoving)
     )
 }
-
 let raft: Sprite = null
 let hero: Sprite = null
 let raftVel = 0
 let heroVel = 0
 let canEnterRaft = false
 let currentTileMap = "HeroHouse"
-
+let canEnterLand = false
 tiles.loadMap(tiles.createMap(assets.tilemap`HeroHouse`))
-
 heroVel = 200
 raftVel = 50
-
 spawnHero()
 
-game.onUpdate(function (){
-    if (currentTileMap == "HeroHouse"){
-        heroHouse()
-    }
+loadHeroHouse()
 
-    if (currentTileMap == "Sea"){}
+
+scene.onHitWall(SpriteKind.Raft, function (sprite, location) {
+    if (currentTileMap == "Sea") {
+        canEnterLand = true
+    }
+})
+
+
+game.onUpdateInterval(100, function () {
+    // if (currentTileMap == "HeroHouse") {
+    //     loadHeroHouse()
+    // }
+    if (currentTileMap == "Sea") {
+    	loadSea()
+    }
+    if (currentTileMap == "Village"){
+        loadVillage()
+    }
 })
