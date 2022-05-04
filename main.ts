@@ -1,14 +1,9 @@
 namespace SpriteKind {
-    export const Raft = SpriteKind.create()
-    export const Trigger = SpriteKind.create()
     export const RaftWithPlayer = SpriteKind.create()
-    export const House = SpriteKind.create()
+    export const Object = SpriteKind.create()
 }
-// scene.onHitWall(SpriteKind.RaftWithPlayer, function(sprite, location){
-//     if (currentTileMap == "River") {
-//         tiles.loadMap(tiles.createMap(assets.tilemap`River2`))
-//     }
-// })
+
+
 scene.onOverlapTile(SpriteKind.RaftWithPlayer, assets.tile`myTile43`, function (sprite, location) {
     if (currentTileMap == "River"){ 
         tiles.loadMap(tiles.createMap(assets.tilemap`River2`))
@@ -43,10 +38,9 @@ function loadVillage () {
         if (canEnterRaft == true) {
             currentTileMap = "River"
             tiles.loadMap(tiles.createMap(assets.tilemap`River`))
-            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
             sprites.destroyAllSpritesOfKind(SpriteKind.Player)
             sprites.destroyAllSpritesOfKind(SpriteKind.RaftWithPlayer)
-            sprites.destroyAllSpritesOfKind(SpriteKind.House)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Object)
             enterRaftingMode()
             canEnterRiver = false
             canEnterRaft = false
@@ -69,10 +63,9 @@ function loadHeroHouse () {
     controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         if (canEnterRaft == true) {
             currentTileMap = "Sea"
-            tiles.loadMap(tiles.createMap(assets.tilemap`Sea`))
-            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
+            tiles.loadMap(tiles.createMap(assets.tilemap`Sea`))        
             sprites.destroyAllSpritesOfKind(SpriteKind.Player)
-            sprites.destroyAllSpritesOfKind(SpriteKind.House)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Object)
             enterRaftingMode()
             canEnterRaft = false
             loadSea()
@@ -86,9 +79,9 @@ function loadSea () {
         if (canEnterVillage == true) {
             currentTileMap = "Village"
             tiles.loadMap(tiles.createMap(assets.tilemap`Village`))
-            sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
             sprites.destroyAllSpritesOfKind(SpriteKind.Player)
             sprites.destroyAllSpritesOfKind(SpriteKind.RaftWithPlayer)
+            sprites.destroyAllSpritesOfKind(SpriteKind.Object)
             spawnHero()
             spawnRaft()
             spawnHouses()
@@ -102,19 +95,19 @@ function loadSea () {
 
 function spawnHouses () {
     for (let value of tiles.getTilesByType(assets.tile`myTile41`)) {
-        blueHouse = sprites.create(assets.image`houseBlue`, SpriteKind.House)
+        blueHouse = sprites.create(assets.image`houseBlue`, SpriteKind.Object)
         tiles.placeOnTile(blueHouse, value)
     }
     for (let value2 of tiles.getTilesByType(assets.tile`myTile39`)) {
-        blueHouse = sprites.create(assets.image`houseBlue0`, SpriteKind.House)
+        blueHouse = sprites.create(assets.image`houseBlue0`, SpriteKind.Object)
         tiles.placeOnTile(blueHouse, value2)
     }
     for (let value3 of tiles.getTilesByType(assets.tile`myTile40`)) {
-        redHouse = sprites.create(assets.image`houseRed`, SpriteKind.House)
+        redHouse = sprites.create(assets.image`houseRed`, SpriteKind.Object)
         tiles.placeOnTile(redHouse, value3)
     }
     for (let value4 of tiles.getTilesByType(assets.tile`myTile42`)) {
-        redHouse = sprites.create(assets.image`houseRed0`, SpriteKind.House)
+        redHouse = sprites.create(assets.image`houseRed0`, SpriteKind.Object)
         tiles.placeOnTile(redHouse, value4)
     }
 }
@@ -134,14 +127,14 @@ function spawnHero () {
 
 
 function spawnRaft () {
-    raft = sprites.create(assets.image`RaftFlippedRight`, SpriteKind.Raft)
+    raft = sprites.create(assets.image`RaftFlippedRight`, SpriteKind.Object)
     tiles.placeOnRandomTile(raft, assets.tile`myTile16`)
     tiles.replaceAllTiles(assets.tile`myTile16`, assets.tile`myTile3`)
 }
 
 
 function enterWalkingMode () {
-    sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Object)
     scene.cameraFollowSprite(hero)
     controller.moveSprite(hero, heroVel, heroVel)
     characterAnimations.loopFrames(
@@ -445,7 +438,7 @@ function enterWalkingMode () {
 
 function enterRaftingMode () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
-    sprites.destroyAllSpritesOfKind(SpriteKind.Raft)
+    sprites.destroyAllSpritesOfKind(SpriteKind.Object)
     sprites.destroyAllSpritesOfKind(SpriteKind.RaftWithPlayer)
     raft = sprites.create(assets.image`RaftWithPlayer`, SpriteKind.RaftWithPlayer)
     tiles.placeOnRandomTile(raft, assets.tile`myTile16`)
@@ -1089,15 +1082,3 @@ heroVel = 1000
 raftVel = 1000
 
 loadHeroHouse()
-
-// game.onUpdateInterval(100, function () {
-//     // if (currentTileMap == "HeroHouse") {
-//     // loadHeroHouse()
-//     // }
-//     if (currentTileMap == "Sea") {
-//         loadSea()
-//     }
-//     if (currentTileMap == "Village") {
-//         loadVillage()
-//     }
-// })
