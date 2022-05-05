@@ -5,6 +5,7 @@ namespace SpriteKind {
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function(){
     if (currentTileMap == "River2" && canSpawnNet){
+        spawnNet()
         game.over(true)
     }
 })
@@ -24,8 +25,6 @@ function printDialog () {
         heroDialogs.removeAt(0)
         dialogIndex += 1
     }
-    console.log(dialogIndex)
-    console.log(currentDialogOrder.length - 2)
     if (currentTileMap == "Village" && fristTimeInVillage && dialogIndex < currentDialogOrder.length) {
         if (currentDialogOrder[dialogIndex] == "villager") {
             villager.sayText(villagerDialogs[0], villagerDialogs[0].length * 100, true)
@@ -59,15 +58,23 @@ function printDialog () {
         }
         dialogIndex += 1
     }
-    if (currentTileMap == "River2" && fristTimeInRiver2 && dialogIndex < currentDialogOrder.length) {
+    if (currentTileMap == "River2" && fristTimeInRiver2 == false && dialogIndex < currentDialogOrder.length) {
+        // if (currentDialogOrder[dialogIndex] == "villager") {
+        //     raft.sayText(villagerDialogs[0], villagerDialogs[0].length * 100, true)
+        //     villagerDialogs.removeAt(0)
+        // } else {
+        //     raft.sayText(heroDialogs[0], heroDialogs[0].length * 100, true)
+        //     heroDialogs.removeAt(0)
+        // }
+        // dialogIndex += 1
         if (currentDialogOrder[dialogIndex] == "villager") {
             raft.sayText(villagerDialogs[0], villagerDialogs[0].length * 100, true)
             villagerDialogs.removeAt(0)
-        } else {
+        }else{ 
             raft.sayText(heroDialogs[0], heroDialogs[0].length * 100, true)
             heroDialogs.removeAt(0)
+            dialogIndex ++;
         }
-        dialogIndex += 1
     }
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile32`, function (sprite, location) {
@@ -736,6 +743,10 @@ function loadRiver2 () {
     enterRaftingModeWithVillager()
     canEnterRiver = false
     if (fristTimeInRiver2 == false){
+        dialogIndex = 0
+        currentDialogOrder = ["hero", "hero", "hero", "hero", "hero", "villager"]
+        heroDialogs = ["This net should stop the trash enter the river", "and hold the trash here ", "you can pickup the trash from here", "once in a while to keep the", "net from breaking"]
+        villagerDialogs = ["Thank you very much!!!!"]
         canSpawnNet = true
     }
 }
