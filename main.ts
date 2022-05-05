@@ -1,3 +1,5 @@
+game.splash("sea a trash", "Press enter to enter the raft")
+
 namespace SpriteKind {
     export const Raft = SpriteKind.create()
     export const Object = SpriteKind.create()
@@ -2606,8 +2608,8 @@ heroDialogs = ["placeHolder"]
 villagerDialogs = ["placeHolder"]
 momDialogs = ["placeHolder"]
 currentTileMap = "HeroHouse"
-heroVel = 200
-raftVel = 200
+heroVel = 50
+raftVel = 50
 let net: Sprite = null 
 let villagerFollowingPlayer = false
 loadHeroHouse()
